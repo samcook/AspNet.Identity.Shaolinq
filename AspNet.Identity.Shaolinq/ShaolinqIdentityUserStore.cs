@@ -91,14 +91,9 @@ namespace AspNet.Identity.Shaolinq
 
 			using (var scope = TransactionScopeFactory.CreateReadCommitted())
 			{
-				var dbUser = dataModel.Users.SingleOrDefault(x => x.Id == user.Id);
+				dataModel.Users.DeleteWhere(x => x.Id == user.Id);
 
-				if (dbUser != null)
-				{
-					dbUser.Delete();
-
-					scope.Complete();
-				}
+				scope.Complete();
 			}
 
 			return Task.FromResult<object>(null);
@@ -191,12 +186,7 @@ namespace AspNet.Identity.Shaolinq
 
 			using (var scope = TransactionScopeFactory.CreateReadCommitted())
 			{
-				var userLogin = dataModel.UserLogins.SingleOrDefault(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
-
-				if (userLogin != null && userLogin.User.Id == user.Id)
-				{
-					userLogin.Delete();
-				}
+				dataModel.UserLogins.DeleteWhere(x => x.User.Id == user.Id && x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
 
 				scope.Complete();
 			}
@@ -290,12 +280,7 @@ namespace AspNet.Identity.Shaolinq
 
 			using (var scope = TransactionScopeFactory.CreateReadCommitted())
 			{
-				var userClaim = dataModel.UserClaims.SingleOrDefault(x => x.User.Id == user.Id && x.ClaimType == claim.Type && x.ClaimValue == claim.Value);
-
-				if (userClaim != null)
-				{
-					userClaim.Delete();
-				}
+				dataModel.UserClaims.DeleteWhere(x => x.User.Id == user.Id && x.ClaimType == claim.Type && x.ClaimValue == claim.Value);
 
 				scope.Complete();
 			}
