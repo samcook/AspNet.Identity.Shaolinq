@@ -1,4 +1,5 @@
 ﻿using System;
+using Platform.Validation;
 using Shaolinq;
 
 namespace AspNet.Identity.Shaolinq.DataModel
@@ -14,7 +15,12 @@ namespace AspNet.Identity.Shaolinq.DataModel
 		public abstract string Name { get; set; }
 
 		[PersistedMember]
+		[ValueRequired]
+		[Index(Unique = true)]
 		public abstract string Email { get; set; }
+
+		[PersistedMember]
+		public abstract bool EmailConfirmed { get; set; }
 
 		[PersistedMember]
 		public abstract string PasswordHash { get; set; }

@@ -16,11 +16,11 @@ namespace AspNet.Identity.Shaolinq
 		IUserLoginStore<ShaolinqIdentityUser, Guid>,
 		IUserClaimStore<ShaolinqIdentityUser, Guid>,
 		IUserSecurityStampStore<ShaolinqIdentityUser, Guid>,
-		IUserRoleStore<ShaolinqIdentityUser, Guid>
+		IUserRoleStore<ShaolinqIdentityUser, Guid>,
+		IUserEmailStore<ShaolinqIdentityUser, Guid>
 
 		//IQueryableUserStore<ShaolinqIdentityUser, Guid>,
 		//IUserLockoutStore<ShaolinqIdentityUser, Guid>,
-		//IUserEmailStore<ShaolinqIdentityUser, Guid>,
 		//IUserPhoneNumberStore<ShaolinqIdentityUser, Guid>,
 		//IUserTwoFactorStore<ShaolinqIdentityUser, Guid>
 
@@ -384,6 +384,57 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(dbRole != null);
 		}
 
+		public Task SetEmailAsync(ShaolinqIdentityUser user, string email)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException("user");
+			}
+
+			user.Email = email;
+
+			return Task.FromResult<object>(null);
+		}
+
+		public Task<string> GetEmailAsync(ShaolinqIdentityUser user)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException("user");
+			}
+
+			return Task.FromResult(user.Email);
+		}
+
+		public Task<bool> GetEmailConfirmedAsync(ShaolinqIdentityUser user)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException("user");
+			}
+
+			return Task.FromResult(user.EmailConfirmed);
+		}
+
+		public Task SetEmailConfirmedAsync(ShaolinqIdentityUser user, bool confirmed)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException("user");
+			}
+
+			user.EmailConfirmed = confirmed;
+
+			return Task.FromResult<object>(null);
+		}
+
+		public Task<ShaolinqIdentityUser> FindByEmailAsync(string email)
+		{
+			var dbUser = dataModel.Users.SingleOrDefault(x => x.Email == email);
+
+			return Task.FromResult(MapUser(dbUser));
+		}
+
 		public void Dispose()
 		{
 		}
@@ -392,6 +443,7 @@ namespace AspNet.Identity.Shaolinq
 		{
 			toUser.UserName = fromUser.UserName;
 			toUser.Email = fromUser.Email;
+			toUser.EmailConfirmed = fromUser.EmailConfirmed;
 			toUser.PasswordHash = fromUser.PasswordHash;
 			toUser.SecurityStamp = fromUser.SecurityStamp;
 			toUser.IsAnonymousUser = fromUser.IsAnonymousUser;
@@ -409,6 +461,7 @@ namespace AspNet.Identity.Shaolinq
 				Id = dbUser.Id,
 				UserName = dbUser.UserName,
 				Email = dbUser.Email,
+				EmailConfirmed = dbUser.EmailConfirmed,
 				PasswordHash = dbUser.PasswordHash,
 				SecurityStamp = dbUser.SecurityStamp,
 				IsAnonymousUser = dbUser.IsAnonymousUser

@@ -10,6 +10,7 @@ namespace AspNet.Identity.Shaolinq
 		public Guid Id { get; internal set; }
 		public string UserName { get; set; }
 		public string Email { get; set; }
+		public bool EmailConfirmed { get; set; }
 		public string PasswordHash { get; set; }
 		public string SecurityStamp { get; set; }
 		public bool IsAnonymousUser { get; set; }
