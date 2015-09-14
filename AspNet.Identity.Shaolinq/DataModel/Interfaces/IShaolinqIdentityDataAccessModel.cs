@@ -7,5 +7,6 @@ namespace AspNet.Identity.Shaolinq.DataModel.Interfaces
 		DataAccessObjects<DbUser> Users { get; }
 		DataAccessObjects<DbUserLogin> UserLogins { get; }
 		DataAccessObjects<DbUserClaim> UserClaims { get; }
+		DataAccessObjects<DbUserRole> UserRoles { get; } 
 	}
 }

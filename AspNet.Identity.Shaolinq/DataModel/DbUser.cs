@@ -33,5 +33,8 @@ namespace AspNet.Identity.Shaolinq.DataModel
 
 		[RelatedDataAccessObjects]
 		public abstract RelatedDataAccessObjects<DbUserClaim> UserClaims { get; }
+
+		[RelatedDataAccessObjects]
+		public abstract RelatedDataAccessObjects<DbUserRole> UserRoles { get; }
 	}
 }

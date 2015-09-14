@@ -15,9 +15,9 @@ namespace AspNet.Identity.Shaolinq
 		IUserPasswordStore<ShaolinqIdentityUser, Guid>,
 		IUserLoginStore<ShaolinqIdentityUser, Guid>,
 		IUserClaimStore<ShaolinqIdentityUser, Guid>,
-		IUserSecurityStampStore<ShaolinqIdentityUser, Guid>
+		IUserSecurityStampStore<ShaolinqIdentityUser, Guid>,
+		IUserRoleStore<ShaolinqIdentityUser, Guid>
 
-		//IUserRoleStore<ShaolinqIdentityUser, Guid>,
 		//IQueryableUserStore<ShaolinqIdentityUser, Guid>,
 		//IUserLockoutStore<ShaolinqIdentityUser, Guid>,
 		//IUserEmailStore<ShaolinqIdentityUser, Guid>,
@@ -323,6 +323,80 @@ namespace AspNet.Identity.Shaolinq
 			}
 
 			return Task.FromResult(user.SecurityStamp);
+		}
+
+		public Task AddToRoleAsync(ShaolinqIdentityUser user, string roleName)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException("user");
+			}
+
+			if (string.IsNullOrEmpty(roleName))
+			{
+				throw new ArgumentNullException("roleName");
+			}
+
+			using (var scope = TransactionScopeFactory.CreateReadCommitted())
+			{
+				var dbUserRole = dataModel.UserRoles.Create();
+				var dbUser = dataModel.Users.GetReference(user.Id);
+
+				dbUserRole.User = dbUser;
+				dbUserRole.Role = roleName;
+
+				scope.Complete();
+			}
+
+			return Task.FromResult<object>(null);
+		}
+
+		public Task RemoveFromRoleAsync(ShaolinqIdentityUser user, string roleName)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException("user");
+			}
+
+			if (string.IsNullOrEmpty(roleName))
+			{
+				throw new ArgumentNullException("roleName");
+			}
+
+			using (var scope = TransactionScopeFactory.CreateReadCommitted())
+			{
+				dataModel.UserRoles.DeleteWhere(x => x.User.Id == user.Id && x.Role == roleName);
+
+				scope.Complete();
+			}
+
+			return Task.FromResult<object>(null);
+		}
+
+		public Task<IList<string>> GetRolesAsync(ShaolinqIdentityUser user)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException("user");
+			}
+
+			var dbRoles = dataModel.UserRoles.Where(x => x.User.Id == user.Id);
+
+			IList<string> roles = dbRoles.Select(x => x.Role).ToList();
+
+			return Task.FromResult(roles);
+		}
+
+		public Task<bool> IsInRoleAsync(ShaolinqIdentityUser user, string roleName)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException("user");
+			}
+
+			var dbRole = dataModel.UserRoles.SingleOrDefault(x => x.User.Id == user.Id && x.Role == roleName);
+
+			return Task.FromResult(dbRole != null);
 		}
 
 		public void Dispose()

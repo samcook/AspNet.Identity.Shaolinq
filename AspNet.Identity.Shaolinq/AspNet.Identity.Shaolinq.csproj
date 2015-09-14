@@ -94,6 +94,7 @@
     <Compile Include="DataModel\DbUser.cs" />
     <Compile Include="DataModel\DbUserClaim.cs" />
     <Compile Include="DataModel\DbUserLogin.cs" />
+    <Compile Include="DataModel\DbUserRole.cs" />
     <Compile Include="DataModel\Interfaces\IShaolinqIdentityDataAccessModel.cs" />
     <Compile Include="ShaolinqIdentityUserManager.cs" />
     <Compile Include="ShaolinqIdentityUserStore.cs" />
