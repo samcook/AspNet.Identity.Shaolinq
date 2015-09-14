@@ -15,7 +15,6 @@ namespace AspNet.Identity.Shaolinq.DataModel
 		public abstract string Name { get; set; }
 
 		[PersistedMember]
-		[ValueRequired]
 		[Index(Unique = true)]
 		public abstract string Email { get; set; }
 
