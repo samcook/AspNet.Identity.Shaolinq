@@ -1,28 +1,29 @@
 <?xml version="1.0"?>
 <package>
-  <metadata>
-    <id>AspNet.Identity.Shaolinq</id>
-    <version>1.0.0</version>
-    <title>AspNet.Identity.Shaolinq</title>
-    <authors>Sam Cook</authors>
-    <owners>Sam Cook</owners>
-    <licenseUrl>https://github.com/samcook/AspNet.Identity.Shaolinq/blob/master/LICENSE</licenseUrl>
-    <projectUrl>https://github.com/samcook/AspNet.Identity.Shaolinq</projectUrl>
-    <!--<iconUrl></iconUrl>-->
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>An persistence provider for AspNet Identity using Shaolinq</description>
-    <releaseNotes>
+	<metadata>
+		<id>AspNet.Identity.Shaolinq</id>
+		<version>1.0.0-alpha1</version>
+		<title>AspNet.Identity.Shaolinq</title>
+		<authors>Sam Cook</authors>
+		<owners>Sam Cook</owners>
+		<licenseUrl>https://github.com/samcook/AspNet.Identity.Shaolinq/blob/master/LICENSE</licenseUrl>
+		<projectUrl>https://github.com/samcook/AspNet.Identity.Shaolinq</projectUrl>
+		<!--<iconUrl></iconUrl>-->
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>An persistence provider for AspNet Identity using Shaolinq</description>
+		<releaseNotes>
 1.0.0 - Initial release.
-    </releaseNotes>
-    <copyright>Copyright 2015 Sam Cook</copyright>
-    <tags>AspNet Identity Shaolinq</tags>
-    <dependencies>
+		</releaseNotes>
+		<copyright>Copyright 2015 Sam Cook</copyright>
+		<tags>AspNet Identity Shaolinq</tags>
+		<dependencies>
 			<dependency id="Microsoft.AspNet.Identity.Core" version="2.2.0" />
 			<dependency id="Microsoft.AspNet.Identity.Owin" version="2.2.0" />
-      <dependency id="Shaolinq" version="0.9.1.408"/>
-    </dependencies>
-  </metadata>
-  <files>
-    <file src="AspNet.Identity.Shaolinq\bin\Release\AspNet.Identity.Shaolinq.dll" target="lib\net45" />
-  </files>
+			<dependency id="Shaolinq" version="0.9.1.408"/>
+		</dependencies>
+	</metadata>
+	<files>
+		<file src="AspNet.Identity.Shaolinq\bin\Release\AspNet.Identity.Shaolinq.dll" target="lib\net45" />
+		<file src="AspNet.Identity.Shaolinq\bin\Release\AspNet.Identity.Shaolinq.pdb" target="lib\net45" />
+	</files>
 </package>
