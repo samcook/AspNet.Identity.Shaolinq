@@ -10,7 +10,7 @@
 		<projectUrl>https://github.com/samcook/AspNet.Identity.Shaolinq</projectUrl>
 		<!--<iconUrl></iconUrl>-->
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<description>An persistence provider for AspNet Identity using Shaolinq</description>
+		<description>A persistence provider for AspNet Identity using Shaolinq</description>
 		<releaseNotes>
 1.0.0 - Initial release.
 		</releaseNotes>
