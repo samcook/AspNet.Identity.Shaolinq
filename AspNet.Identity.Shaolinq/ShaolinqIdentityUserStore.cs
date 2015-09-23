@@ -47,6 +47,8 @@ namespace AspNet.Identity.Shaolinq
 				var dbUser = dataModel.Users.Create();
 
 				dbUser.Id = Guid.NewGuid();
+				dbUser.ActivationDate = DateTime.UtcNow;
+
 				MapUser(user, dbUser);
 
 				scope.Flush(dataModel);
