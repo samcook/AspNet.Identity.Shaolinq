@@ -7,22 +7,28 @@ using Shaolinq;
 
 namespace AspNet.Identity.Shaolinq
 {
-	public class ShaolinqIdentityUserManager : UserManager<ShaolinqIdentityUser, Guid>
+	public class ShaolinqIdentityUserManager<TIdentityUser, TKey> : UserManager<TIdentityUser, TKey>
+		where TIdentityUser : ShaolinqIdentityUser<TKey>, new()
+		where TKey : IEquatable<TKey>
 	{
-		public ShaolinqIdentityUserManager(IUserStore<ShaolinqIdentityUser, Guid> store)
+		public ShaolinqIdentityUserManager(IUserStore<TIdentityUser, TKey> store)
 			: base(store)
 		{
 		}
 
-		public static ShaolinqIdentityUserManager Create<TDataModel>(
-			IdentityFactoryOptions<ShaolinqIdentityUserManager> options,
+		public static ShaolinqIdentityUserManager<TIdentityUser, TKey> Create<TDataModel, TDbUser, TDbUserLogin, TDbUserClaim, TDbUserRole>(
+			IdentityFactoryOptions<ShaolinqIdentityUserManager<TIdentityUser, TKey>> options,
 			IOwinContext context,
 			TDataModel dataModel)
-			where TDataModel : DataAccessModel, IShaolinqIdentityDataAccessModel
+			where TDataModel : DataAccessModel, IShaolinqIdentityDataAccessModel<TKey, TDbUser, TDbUserLogin, TDbUserClaim, TDbUserRole>
+			where TDbUser : DataAccessObject, IShaolinqIdentityDbUser<TKey>
+			where TDbUserLogin : DataAccessObject, IShaolinqIdentityDbUserLogin<TKey, TDbUser>
+			where TDbUserClaim : DataAccessObject, IShaolinqIdentityDbUserClaim<TKey, TDbUser>
+			where TDbUserRole : DataAccessObject, IShaolinqIdentityDbUserRole<TKey, TDbUser>
 		{
-			var manager = new ShaolinqIdentityUserManager(new ShaolinqIdentityUserStore<TDataModel>(dataModel));
+			var manager = new ShaolinqIdentityUserManager<TIdentityUser, TKey>(new ShaolinqIdentityUserStore<TIdentityUser, TDataModel, TKey, TDbUser, TDbUserLogin, TDbUserClaim, TDbUserRole>(dataModel));
 			// Configure validation logic for usernames
-			manager.UserValidator = new UserValidator<ShaolinqIdentityUser, Guid>(manager)
+			manager.UserValidator = new UserValidator<TIdentityUser, TKey>(manager)
 			{
 				AllowOnlyAlphanumericUserNames = false,
 				RequireUniqueEmail = true
@@ -39,7 +45,7 @@ namespace AspNet.Identity.Shaolinq
 			var dataProtectionProvider = options.DataProtectionProvider;
 			if (dataProtectionProvider != null)
 			{
-				manager.UserTokenProvider = new DataProtectorTokenProvider<ShaolinqIdentityUser, Guid>(dataProtectionProvider.Create("ASP.NET Identity"));
+				manager.UserTokenProvider = new DataProtectorTokenProvider<TIdentityUser, TKey>(dataProtectionProvider.Create("ASP.NET Identity"));
 			}
 			return manager;
 		}

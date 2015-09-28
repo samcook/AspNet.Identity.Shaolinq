@@ -1,11 +1,11 @@
 ﻿using System;
-using Platform.Validation;
+using AspNet.Identity.Shaolinq.DataModel.Interfaces;
 using Shaolinq;
 
 namespace AspNet.Identity.Shaolinq.DataModel
 {
 	[DataAccessObject(Name = "User")]
-	public abstract class DbUser : DataAccessObject<Guid>
+	public abstract class DbUser : DataAccessObject<Guid>, IShaolinqIdentityDbUser<Guid>
 	{
 		[Index(Unique = true)]
 		[PersistedMember]

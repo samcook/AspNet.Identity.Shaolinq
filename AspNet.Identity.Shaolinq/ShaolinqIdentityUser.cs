@@ -1,13 +1,13 @@
 using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
+using AspNet.Identity.Shaolinq.DataModel.Interfaces;
 using Microsoft.AspNet.Identity;
 
 namespace AspNet.Identity.Shaolinq
 {
-	public class ShaolinqIdentityUser : IUser<Guid>, IPasswordHash
+	public class ShaolinqIdentityUser<TKey> : IUser<TKey>
+		where TKey : IEquatable<TKey>
 	{
-		public Guid Id { get; internal set; }
+		public TKey Id { get; internal set; }
 		public string UserName { get; set; }
 		public string Email { get; set; }
 		public bool EmailConfirmed { get; set; }
@@ -15,12 +15,30 @@ namespace AspNet.Identity.Shaolinq
 		public string SecurityStamp { get; set; }
 		public bool IsAnonymousUser { get; set; }
 
-		public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ShaolinqIdentityUser, Guid> manager, string authenticationType)
+		public virtual void PopulateFromDbUser(IShaolinqIdentityDbUser<TKey> dbUser)
 		{
-			// Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-			var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
-			// Add custom user claims here
-			return userIdentity;
+			if (dbUser == null)
+			{
+				return;
+			}
+
+			Id = dbUser.Id;
+			UserName = dbUser.UserName;
+			Email = dbUser.Email;
+			EmailConfirmed = dbUser.EmailConfirmed;
+			PasswordHash = dbUser.PasswordHash;
+			SecurityStamp = dbUser.SecurityStamp;
+			IsAnonymousUser = dbUser.IsAnonymousUser;
+		}
+
+		public virtual void PopulateDbUser(IShaolinqIdentityDbUser<TKey> toUser)
+		{
+			toUser.UserName = UserName;
+			toUser.Email = Email;
+			toUser.EmailConfirmed = EmailConfirmed;
+			toUser.PasswordHash = PasswordHash;
+			toUser.SecurityStamp = SecurityStamp;
+			toUser.IsAnonymousUser = IsAnonymousUser;
 		}
 	}
 }

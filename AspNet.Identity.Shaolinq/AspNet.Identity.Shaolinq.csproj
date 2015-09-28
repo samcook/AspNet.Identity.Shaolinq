@@ -96,10 +96,13 @@
     <Compile Include="DataModel\DbUserLogin.cs" />
     <Compile Include="DataModel\DbUserRole.cs" />
     <Compile Include="DataModel\Interfaces\IShaolinqIdentityDataAccessModel.cs" />
+    <Compile Include="DataModel\Interfaces\IShaolinqIdentityDbUser.cs" />
+    <Compile Include="DataModel\Interfaces\IShaolinqIdentityDbUserClaim.cs" />
+    <Compile Include="DataModel\Interfaces\IShaolinqIdentityDbUserLogin.cs" />
+    <Compile Include="DataModel\Interfaces\IShaolinqIdentityDbUserRole.cs" />
     <Compile Include="ShaolinqIdentityUserManager.cs" />
     <Compile Include="ShaolinqIdentityUserStore.cs" />
     <Compile Include="ShaolinqIdentityUser.cs" />
-    <Compile Include="IPasswordHash.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

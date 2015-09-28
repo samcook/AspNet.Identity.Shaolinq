@@ -1,11 +1,12 @@
 using System;
+using AspNet.Identity.Shaolinq.DataModel.Interfaces;
 using Platform.Validation;
 using Shaolinq;
 
 namespace AspNet.Identity.Shaolinq.DataModel
 {
 	[DataAccessObject(Name = "UserRole")]
-	public abstract class DbUserRole : DataAccessObject<Guid>
+	public abstract class DbUserRole : DataAccessObject<Guid>, IShaolinqIdentityDbUserRole<Guid, DbUser>
 	{
 		[ValueRequired]
 		[BackReference]

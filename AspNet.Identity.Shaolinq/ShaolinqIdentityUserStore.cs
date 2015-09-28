@@ -3,28 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using AspNet.Identity.Shaolinq.DataModel;
 using AspNet.Identity.Shaolinq.DataModel.Interfaces;
 using Microsoft.AspNet.Identity;
 using Shaolinq;
 
 namespace AspNet.Identity.Shaolinq
 {
+	public class ShaolinqIdentityUserStore<TIdentityUser, TDataModel, TPrimaryKey, TDbUser, TDbUserLogin, TDbUserClaim, TDbUserRole> :
+		IUserPasswordStore<TIdentityUser, TPrimaryKey>,
+		IUserLoginStore<TIdentityUser, TPrimaryKey>,
+		IUserClaimStore<TIdentityUser, TPrimaryKey>,
+		IUserSecurityStampStore<TIdentityUser, TPrimaryKey>,
+		IUserRoleStore<TIdentityUser, TPrimaryKey>,
+		IUserEmailStore<TIdentityUser, TPrimaryKey>
 
-	public class ShaolinqIdentityUserStore<TDataModel> :
-		IUserPasswordStore<ShaolinqIdentityUser, Guid>,
-		IUserLoginStore<ShaolinqIdentityUser, Guid>,
-		IUserClaimStore<ShaolinqIdentityUser, Guid>,
-		IUserSecurityStampStore<ShaolinqIdentityUser, Guid>,
-		IUserRoleStore<ShaolinqIdentityUser, Guid>,
-		IUserEmailStore<ShaolinqIdentityUser, Guid>
+		//IQueryableUserStore<TIdentityUser, TPrimaryKey>,
+		//IUserLockoutStore<TIdentityUser, TPrimaryKey>,
+		//IUserPhoneNumberStore<TIdentityUser, TPrimaryKey>,
+		//IUserTwoFactorStore<TIdentityUser, TPrimaryKey>
 
-		//IQueryableUserStore<ShaolinqIdentityUser, Guid>,
-		//IUserLockoutStore<ShaolinqIdentityUser, Guid>,
-		//IUserPhoneNumberStore<ShaolinqIdentityUser, Guid>,
-		//IUserTwoFactorStore<ShaolinqIdentityUser, Guid>
-
-		where TDataModel : DataAccessModel, IShaolinqIdentityDataAccessModel
+		where TIdentityUser : ShaolinqIdentityUser<TPrimaryKey>, new()
+		where TDataModel : DataAccessModel, IShaolinqIdentityDataAccessModel<TPrimaryKey, TDbUser, TDbUserLogin, TDbUserClaim, TDbUserRole>
+		where TPrimaryKey : IEquatable<TPrimaryKey>
+		where TDbUser : DataAccessObject, IShaolinqIdentityDbUser<TPrimaryKey>
+		where TDbUserLogin : DataAccessObject, IShaolinqIdentityDbUserLogin<TPrimaryKey, TDbUser>
+		where TDbUserClaim : DataAccessObject, IShaolinqIdentityDbUserClaim<TPrimaryKey, TDbUser>
+		where TDbUserRole : DataAccessObject, IShaolinqIdentityDbUserRole<TPrimaryKey, TDbUser>
 	{
 		private readonly TDataModel dataModel;
 
@@ -35,7 +39,7 @@ namespace AspNet.Identity.Shaolinq
 			this.dataModel = dataModel;
 		}
 
-		public Task CreateAsync(ShaolinqIdentityUser user)
+		public Task CreateAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -46,10 +50,9 @@ namespace AspNet.Identity.Shaolinq
 			{
 				var dbUser = dataModel.Users.Create();
 
-				dbUser.Id = Guid.NewGuid();
-				dbUser.ActivationDate = DateTime.UtcNow;
-
 				MapUser(user, dbUser);
+
+				dbUser.ActivationDate = DateTime.UtcNow;
 
 				scope.Flush(dataModel);
 				scope.Complete();
@@ -60,7 +63,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task UpdateAsync(ShaolinqIdentityUser user)
+		public Task UpdateAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -69,7 +72,7 @@ namespace AspNet.Identity.Shaolinq
 
 			using (var scope = TransactionScopeFactory.CreateReadCommitted())
 			{
-				var dbUser = dataModel.Users.SingleOrDefault(x => x.Id == user.Id);
+				var dbUser = dataModel.Users.SingleOrDefault(x => x.Id.Equals(user.Id));
 
 				if (dbUser == null)
 				{
@@ -84,7 +87,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task DeleteAsync(ShaolinqIdentityUser user)
+		public Task DeleteAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -93,7 +96,7 @@ namespace AspNet.Identity.Shaolinq
 
 			using (var scope = TransactionScopeFactory.CreateReadCommitted())
 			{
-				dataModel.Users.DeleteWhere(x => x.Id == user.Id);
+				dataModel.Users.DeleteWhere(x => x.Id.Equals(user.Id));
 
 				scope.Complete();
 			}
@@ -101,21 +104,21 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<ShaolinqIdentityUser> FindByIdAsync(Guid userId)
+		public Task<TIdentityUser> FindByIdAsync(TPrimaryKey userId)
 		{
-			var dbUser = dataModel.Users.SingleOrDefault(x => x.Id == userId);
+			var dbUser = dataModel.Users.SingleOrDefault(x => x.Id.Equals(userId));
 
 			return Task.FromResult(MapUser(dbUser));
 		}
 
-		public Task<ShaolinqIdentityUser> FindByNameAsync(string userName)
+		public Task<TIdentityUser> FindByNameAsync(string userName)
 		{
 			var dbUser = dataModel.Users.SingleOrDefault(x => x.UserName == userName);
 
 			return Task.FromResult(MapUser(dbUser));
 		}
 
-		public Task SetPasswordHashAsync(ShaolinqIdentityUser user, string passwordHash)
+		public Task SetPasswordHashAsync(TIdentityUser user, string passwordHash)
 		{
 			if (user == null)
 			{
@@ -127,7 +130,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<string> GetPasswordHashAsync(ShaolinqIdentityUser user)
+		public Task<string> GetPasswordHashAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -137,7 +140,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(user.PasswordHash);
 		}
 
-		public Task<bool> HasPasswordAsync(ShaolinqIdentityUser user)
+		public Task<bool> HasPasswordAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -147,7 +150,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
 		}
 
-		public Task AddLoginAsync(ShaolinqIdentityUser user, UserLoginInfo login)
+		public Task AddLoginAsync(TIdentityUser user, UserLoginInfo login)
 		{
 			if (user == null)
 			{
@@ -174,7 +177,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task RemoveLoginAsync(ShaolinqIdentityUser user, UserLoginInfo login)
+		public Task RemoveLoginAsync(TIdentityUser user, UserLoginInfo login)
 		{
 			if (user == null)
 			{
@@ -188,7 +191,7 @@ namespace AspNet.Identity.Shaolinq
 
 			using (var scope = TransactionScopeFactory.CreateReadCommitted())
 			{
-				dataModel.UserLogins.DeleteWhere(x => x.User.Id == user.Id && x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
+				dataModel.UserLogins.DeleteWhere(x => x.User.Id.Equals(user.Id) && x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
 
 				scope.Complete();
 			}
@@ -196,21 +199,21 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<IList<UserLoginInfo>> GetLoginsAsync(ShaolinqIdentityUser user)
+		public Task<IList<UserLoginInfo>> GetLoginsAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
 				throw new ArgumentNullException("user");
 			}
 
-			var dbUserLogins = dataModel.UserLogins.Where(x => x.User.Id == user.Id);
+			var dbUserLogins = dataModel.UserLogins.Where(x => x.User.Id.Equals(user.Id));
 
 			IList<UserLoginInfo> userLogins = dbUserLogins.Select(x => new UserLoginInfo(x.LoginProvider, x.ProviderKey)).ToList();
 
 			return Task.FromResult(userLogins);
 		}
 
-		public Task<ShaolinqIdentityUser> FindAsync(UserLoginInfo login)
+		public Task<TIdentityUser> FindAsync(UserLoginInfo login)
 		{
 			if (login == null)
 			{
@@ -224,24 +227,24 @@ namespace AspNet.Identity.Shaolinq
 				return Task.FromResult(MapUser(userLogin.User));
 			}
 
-			return Task.FromResult<ShaolinqIdentityUser>(null);
+			return Task.FromResult<TIdentityUser>(null);
 		}
 
-		public Task<IList<Claim>> GetClaimsAsync(ShaolinqIdentityUser user)
+		public Task<IList<Claim>> GetClaimsAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
 				throw new ArgumentNullException("user");
 			}
 
-			var dbClaims = dataModel.UserClaims.Where(x => x.User.Id == user.Id);
+			var dbClaims = dataModel.UserClaims.Where(x => x.User.Id.Equals(user.Id));
 
 			IList<Claim> claims = dbClaims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).ToList();
 
 			return Task.FromResult(claims);
 		}
 
-		public Task AddClaimAsync(ShaolinqIdentityUser user, Claim claim)
+		public Task AddClaimAsync(TIdentityUser user, Claim claim)
 		{
 			if (user == null)
 			{
@@ -268,7 +271,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task RemoveClaimAsync(ShaolinqIdentityUser user, Claim claim)
+		public Task RemoveClaimAsync(TIdentityUser user, Claim claim)
 		{
 			if (user == null)
 			{
@@ -282,7 +285,7 @@ namespace AspNet.Identity.Shaolinq
 
 			using (var scope = TransactionScopeFactory.CreateReadCommitted())
 			{
-				dataModel.UserClaims.DeleteWhere(x => x.User.Id == user.Id && x.ClaimType == claim.Type && x.ClaimValue == claim.Value);
+				dataModel.UserClaims.DeleteWhere(x => x.User.Id.Equals(user.Id) && x.ClaimType == claim.Type && x.ClaimValue == claim.Value);
 
 				scope.Complete();
 			}
@@ -290,7 +293,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task SetSecurityStampAsync(ShaolinqIdentityUser user, string stamp)
+		public Task SetSecurityStampAsync(TIdentityUser user, string stamp)
 		{
 			if (user == null)
 			{
@@ -302,7 +305,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<string> GetSecurityStampAsync(ShaolinqIdentityUser user)
+		public Task<string> GetSecurityStampAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -312,7 +315,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(user.SecurityStamp);
 		}
 
-		public Task AddToRoleAsync(ShaolinqIdentityUser user, string roleName)
+		public Task AddToRoleAsync(TIdentityUser user, string roleName)
 		{
 			if (user == null)
 			{
@@ -338,7 +341,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task RemoveFromRoleAsync(ShaolinqIdentityUser user, string roleName)
+		public Task RemoveFromRoleAsync(TIdentityUser user, string roleName)
 		{
 			if (user == null)
 			{
@@ -352,7 +355,7 @@ namespace AspNet.Identity.Shaolinq
 
 			using (var scope = TransactionScopeFactory.CreateReadCommitted())
 			{
-				dataModel.UserRoles.DeleteWhere(x => x.User.Id == user.Id && x.Role == roleName);
+				dataModel.UserRoles.DeleteWhere(x => x.User.Id.Equals(user.Id) && x.Role == roleName);
 
 				scope.Complete();
 			}
@@ -360,33 +363,33 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<IList<string>> GetRolesAsync(ShaolinqIdentityUser user)
+		public Task<IList<string>> GetRolesAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
 				throw new ArgumentNullException("user");
 			}
 
-			var dbRoles = dataModel.UserRoles.Where(x => x.User.Id == user.Id);
+			var dbRoles = dataModel.UserRoles.Where(x => x.User.Id.Equals(user.Id));
 
 			IList<string> roles = dbRoles.Select(x => x.Role).ToList();
 
 			return Task.FromResult(roles);
 		}
 
-		public Task<bool> IsInRoleAsync(ShaolinqIdentityUser user, string roleName)
+		public Task<bool> IsInRoleAsync(TIdentityUser user, string roleName)
 		{
 			if (user == null)
 			{
 				throw new ArgumentNullException("user");
 			}
 
-			var dbRole = dataModel.UserRoles.SingleOrDefault(x => x.User.Id == user.Id && x.Role == roleName);
+			var dbRole = dataModel.UserRoles.SingleOrDefault(x => x.User.Id.Equals(user.Id) && x.Role == roleName);
 
 			return Task.FromResult(dbRole != null);
 		}
 
-		public Task SetEmailAsync(ShaolinqIdentityUser user, string email)
+		public Task SetEmailAsync(TIdentityUser user, string email)
 		{
 			if (user == null)
 			{
@@ -398,7 +401,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<string> GetEmailAsync(ShaolinqIdentityUser user)
+		public Task<string> GetEmailAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -408,7 +411,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(user.Email);
 		}
 
-		public Task<bool> GetEmailConfirmedAsync(ShaolinqIdentityUser user)
+		public Task<bool> GetEmailConfirmedAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -418,7 +421,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(user.EmailConfirmed);
 		}
 
-		public Task SetEmailConfirmedAsync(ShaolinqIdentityUser user, bool confirmed)
+		public Task SetEmailConfirmedAsync(TIdentityUser user, bool confirmed)
 		{
 			if (user == null)
 			{
@@ -430,7 +433,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<ShaolinqIdentityUser> FindByEmailAsync(string email)
+		public Task<TIdentityUser> FindByEmailAsync(string email)
 		{
 			var dbUser = dataModel.Users.SingleOrDefault(x => x.Email == email);
 
@@ -441,33 +444,21 @@ namespace AspNet.Identity.Shaolinq
 		{
 		}
 
-		private static void MapUser(ShaolinqIdentityUser fromUser, DbUser toUser)
+		private static void MapUser(TIdentityUser fromUser, TDbUser toUser)
 		{
-			toUser.UserName = fromUser.UserName;
-			toUser.Email = fromUser.Email;
-			toUser.EmailConfirmed = fromUser.EmailConfirmed;
-			toUser.PasswordHash = fromUser.PasswordHash;
-			toUser.SecurityStamp = fromUser.SecurityStamp;
-			toUser.IsAnonymousUser = fromUser.IsAnonymousUser;
+			fromUser.PopulateDbUser(toUser);
 		}
 
-		private static ShaolinqIdentityUser MapUser(DbUser dbUser)
+		private static TIdentityUser MapUser(TDbUser dbUser)
 		{
 			if (dbUser == null)
 			{
 				return null;
 			}
 
-			var user = new ShaolinqIdentityUser
-			{
-				Id = dbUser.Id,
-				UserName = dbUser.UserName,
-				Email = dbUser.Email,
-				EmailConfirmed = dbUser.EmailConfirmed,
-				PasswordHash = dbUser.PasswordHash,
-				SecurityStamp = dbUser.SecurityStamp,
-				IsAnonymousUser = dbUser.IsAnonymousUser
-			};
+			var user = new TIdentityUser();
+
+			user.PopulateFromDbUser(dbUser);
 
 			return user;
 		}

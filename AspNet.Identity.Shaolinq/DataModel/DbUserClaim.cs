@@ -1,11 +1,12 @@
 ﻿using System;
+using AspNet.Identity.Shaolinq.DataModel.Interfaces;
 using Platform.Validation;
 using Shaolinq;
 
 namespace AspNet.Identity.Shaolinq.DataModel
 {
 	[DataAccessObject(Name = "UserClaim")]
-	public abstract class DbUserClaim : DataAccessObject<Guid>
+	public abstract class DbUserClaim : DataAccessObject<Guid>, IShaolinqIdentityDbUserClaim<Guid, DbUser>
 	{
 		[ValueRequired]
 		[BackReference]
