@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>AspNet.Identity.Shaolinq</id>
-		<version>1.0.0-alpha2</version>
+		<version>1.1.0-alpha1</version>
 		<title>AspNet.Identity.Shaolinq</title>
 		<authors>Sam Cook</authors>
 		<owners>Sam Cook</owners>
@@ -12,6 +12,7 @@
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>A persistence provider for AspNet Identity using Shaolinq</description>
 		<releaseNotes>
+1.1.0 - Add support for more generic user objects (both Asp.net Identity and Shaolinq).
 1.0.0 - Initial release.
 		</releaseNotes>
 		<copyright>Copyright 2015 Sam Cook</copyright>
@@ -19,7 +20,7 @@
 		<dependencies>
 			<dependency id="Microsoft.AspNet.Identity.Core" version="2.2.0" />
 			<dependency id="Microsoft.AspNet.Identity.Owin" version="2.2.0" />
-			<dependency id="Shaolinq" version="0.9.1.408"/>
+			<dependency id="Shaolinq" version="0.9.1.411"/>
 		</dependencies>
 	</metadata>
 	<files>
