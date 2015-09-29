@@ -20,7 +20,7 @@
 		<dependencies>
 			<dependency id="Microsoft.AspNet.Identity.Core" version="2.2.0" />
 			<dependency id="Microsoft.AspNet.Identity.Owin" version="2.2.0" />
-			<dependency id="Shaolinq" version="0.9.1.411"/>
+			<dependency id="Shaolinq" version="0.9.1.418"/>
 		</dependencies>
 	</metadata>
 	<files>
