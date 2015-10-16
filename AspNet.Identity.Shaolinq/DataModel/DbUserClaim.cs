@@ -10,6 +10,7 @@ namespace AspNet.Identity.Shaolinq.DataModel
 	{
 		[ValueRequired]
 		[BackReference]
+		[Index]
 		public abstract DbUser User { get; set; }
 
 		[PersistedMember]

@@ -10,12 +10,15 @@ namespace AspNet.Identity.Shaolinq.DataModel
 	{
 		[ValueRequired]
 		[BackReference]
+		[Index]
 		public abstract DbUser User { get; set; }
 
 		[PersistedMember]
+		[Index(IndexName = "UserLogin_LoginProvider_ProviderKey_idx", CompositeOrder = 0)]
 		public abstract string LoginProvider { get; set; }
 
 		[PersistedMember]
+		[Index(IndexName = "UserLogin_LoginProvider_ProviderKey_idx", CompositeOrder = 1)]
 		public abstract string ProviderKey { get; set; }
 	}
 }

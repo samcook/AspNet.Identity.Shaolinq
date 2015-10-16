@@ -10,12 +10,13 @@ namespace AspNet.Identity.Shaolinq.DataModel
 	{
 		[ValueRequired]
 		[BackReference]
-		[Index(IndexName = "User_Role_Idx", CompositeOrder = 0, Unique = true)]
+		[Index]
+		[Index(IndexName = "UserRole_User_Role_idx", CompositeOrder = 0, Unique = true)]
 		public abstract DbUser User { get; set; }
 
 		[ValueRequired]
 		[PersistedMember]
-		[Index(IndexName = "User_Role_Idx", CompositeOrder = 1, Unique = true)]
+		[Index(IndexName = "UserRole_User_Role_idx", CompositeOrder = 1, Unique = true)]
 		public abstract string Role { get; set; }
 	}
 }
