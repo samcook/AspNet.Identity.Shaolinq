@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>AspNet.Identity.Shaolinq</id>
-		<version>1.1.0-alpha1</version>
+		<version>1.1.0-alpha2</version>
 		<title>AspNet.Identity.Shaolinq</title>
 		<authors>Sam Cook</authors>
 		<owners>Sam Cook</owners>
