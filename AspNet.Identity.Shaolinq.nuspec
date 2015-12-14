@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>AspNet.Identity.Shaolinq</id>
-		<version>1.1.0-alpha2</version>
+		<version>1.1.1-alpha</version>
 		<title>AspNet.Identity.Shaolinq</title>
 		<authors>Sam Cook</authors>
 		<owners>Sam Cook</owners>
@@ -20,11 +20,11 @@
 		<dependencies>
 			<dependency id="Microsoft.AspNet.Identity.Core" version="2.2.0" />
 			<dependency id="Microsoft.AspNet.Identity.Owin" version="2.2.0" />
-			<dependency id="Shaolinq" version="0.9.1.418"/>
+			<dependency id="Shaolinq" version="1.0.1.508-rc"/>
 		</dependencies>
 	</metadata>
 	<files>
-		<file src="AspNet.Identity.Shaolinq\bin\Release\AspNet.Identity.Shaolinq.dll" target="lib\net45" />
-		<file src="AspNet.Identity.Shaolinq\bin\Release\AspNet.Identity.Shaolinq.pdb" target="lib\net45" />
+		<file src="AspNet.Identity.Shaolinq\bin\Release\AspNet.Identity.Shaolinq.dll" target="lib\net452" />
+		<file src="AspNet.Identity.Shaolinq\bin\Release\AspNet.Identity.Shaolinq.pdb" target="lib\net452" />
 	</files>
 </package>
