@@ -91,15 +91,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataModel\DbUser.cs" />
-    <Compile Include="DataModel\DbUserClaim.cs" />
-    <Compile Include="DataModel\DbUserLogin.cs" />
-    <Compile Include="DataModel\DbUserRole.cs" />
-    <Compile Include="DataModel\Interfaces\IShaolinqIdentityDataAccessModel.cs" />
-    <Compile Include="DataModel\Interfaces\IShaolinqIdentityDbUser.cs" />
-    <Compile Include="DataModel\Interfaces\IShaolinqIdentityDbUserClaim.cs" />
-    <Compile Include="DataModel\Interfaces\IShaolinqIdentityDbUserLogin.cs" />
-    <Compile Include="DataModel\Interfaces\IShaolinqIdentityDbUserRole.cs" />
     <Compile Include="ShaolinqIdentityUserManager.cs" />
     <Compile Include="ShaolinqIdentityUserStore.cs" />
     <Compile Include="ShaolinqIdentityUser.cs" />
@@ -110,6 +101,13 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\AspNet.Identity.Shaolinq.DataModel\AspNet.Identity.Shaolinq.DataModel.csproj">
+      <Project>{042605a4-b1de-415f-bb4f-9e51188e15f1}</Project>
+      <Name>AspNet.Identity.Shaolinq.DataModel</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
