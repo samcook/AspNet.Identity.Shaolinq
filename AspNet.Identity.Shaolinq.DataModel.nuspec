@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>AspNet.Identity.Shaolinq.DataModel</id>
-		<version>1.2.1-alpha</version>
+		<version>1.3.0-alpha</version>
 		<title>AspNet.Identity.Shaolinq.DataModel</title>
 		<authors>Sam Cook</authors>
 		<owners>Sam Cook</owners>
@@ -12,6 +12,7 @@
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>A persistence provider for AspNet Identity using Shaolinq</description>
 		<releaseNotes>
+1.3.0 - Support Shaolinq native async
 1.2.0 - Split DataModel into seperate package
 1.1.0 - Add support for more generic user objects (both Asp.net Identity and Shaolinq).
 1.0.0 - Initial release.
@@ -19,7 +20,7 @@
 		<copyright>Copyright 2015 Sam Cook</copyright>
 		<tags>AspNet Identity Shaolinq</tags>
 		<dependencies>
-			<dependency id="Shaolinq" version="1.0.1.508-rc"/>
+			<dependency id="Shaolinq" version="1.0.1.717-rc"/>
 		</dependencies>
 	</metadata>
 	<files>

@@ -39,14 +39,14 @@ namespace AspNet.Identity.Shaolinq
 			this.dataModel = dataModel;
 		}
 
-		public Task CreateAsync(TIdentityUser user)
+		public async Task CreateAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
-			using (var scope = TransactionScopeFactory.CreateReadCommitted())
+			using (var scope = DataAccessScope.CreateReadCommitted())
 			{
 				var dbUser = dataModel.Users.Create();
 
@@ -54,25 +54,24 @@ namespace AspNet.Identity.Shaolinq
 
 				dbUser.ActivationDate = DateTime.UtcNow;
 
-				scope.Flush(dataModel);
-				scope.Complete();
+				await scope.FlushAsync();
 
-				user.Id = dbUser.Id;
+                user.Id = dbUser.Id;
+
+                await scope.CompleteAsync();
 			}
-
-			return Task.FromResult<object>(null);
 		}
 
-		public Task UpdateAsync(TIdentityUser user)
+		public async Task UpdateAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
-			using (var scope = TransactionScopeFactory.CreateReadCommitted())
+			using (var scope = DataAccessScope.CreateReadCommitted())
 			{
-				var dbUser = dataModel.Users.SingleOrDefault(x => x.Id.Equals(user.Id));
+				var dbUser = await dataModel.Users.SingleOrDefaultAsync(x => x.Id.Equals(user.Id));
 
 				if (dbUser == null)
 				{
@@ -81,34 +80,30 @@ namespace AspNet.Identity.Shaolinq
 
 				MapUser(user, dbUser);
 
-				scope.Complete();
+				await scope.CompleteAsync();
 			}
-
-			return Task.FromResult<object>(null);
 		}
 
-		public Task DeleteAsync(TIdentityUser user)
+		public async Task DeleteAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
-			using (var scope = TransactionScopeFactory.CreateReadCommitted())
+			using (var scope = DataAccessScope.CreateReadCommitted())
 			{
-				dataModel.Users.DeleteWhere(x => x.Id.Equals(user.Id));
+				await dataModel.Users.DeleteAsync(x => x.Id.Equals(user.Id));
 
-				scope.Complete();
+				await scope.CompleteAsync();
 			}
-
-			return Task.FromResult<object>(null);
 		}
 
-		public Task<TIdentityUser> FindByIdAsync(TPrimaryKey userId)
+		public async Task<TIdentityUser> FindByIdAsync(TPrimaryKey userId)
 		{
-			var dbUser = dataModel.Users.SingleOrDefault(x => x.Id.Equals(userId));
+			var dbUser = await dataModel.Users.SingleOrDefaultAsync(x => x.Id.Equals(userId));
 
-			return Task.FromResult(MapUser(dbUser));
+		    return MapUser(dbUser);
 		}
 
 		public Task<TIdentityUser> FindByNameAsync(string userName)
@@ -122,7 +117,7 @@ namespace AspNet.Identity.Shaolinq
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			user.PasswordHash = passwordHash;
@@ -134,7 +129,7 @@ namespace AspNet.Identity.Shaolinq
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			return Task.FromResult(user.PasswordHash);
@@ -144,25 +139,25 @@ namespace AspNet.Identity.Shaolinq
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			return Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
 		}
 
-		public Task AddLoginAsync(TIdentityUser user, UserLoginInfo login)
+		public async Task AddLoginAsync(TIdentityUser user, UserLoginInfo login)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			if (login == null)
 			{
-				throw new ArgumentNullException("login");
+				throw new ArgumentNullException(nameof(login));
 			}
 
-			using (var scope = TransactionScopeFactory.CreateReadCommitted())
+			using (var scope = DataAccessScope.CreateReadCommitted())
 			{
 				var dbUserLogin = dataModel.UserLogins.Create();
 				var dbUser = dataModel.Users.GetReference(user.Id);
@@ -171,92 +166,88 @@ namespace AspNet.Identity.Shaolinq
 				dbUserLogin.LoginProvider = login.LoginProvider;
 				dbUserLogin.ProviderKey = login.ProviderKey;
 
-				scope.Complete();
+				await scope.CompleteAsync();
 			}
-
-			return Task.FromResult<object>(null);
 		}
 
-		public Task RemoveLoginAsync(TIdentityUser user, UserLoginInfo login)
+		public async Task RemoveLoginAsync(TIdentityUser user, UserLoginInfo login)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			if (login == null)
 			{
-				throw new ArgumentNullException("login");
+				throw new ArgumentNullException(nameof(login));
 			}
 
-			using (var scope = TransactionScopeFactory.CreateReadCommitted())
+			using (var scope = DataAccessScope.CreateReadUncommited())
 			{
-				dataModel.UserLogins.DeleteWhere(x => x.User.Id.Equals(user.Id) && x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
+				await dataModel.UserLogins.DeleteAsync(x => x.User.Id.Equals(user.Id) && x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
 
-				scope.Complete();
+				await scope.CompleteAsync();
 			}
-
-			return Task.FromResult<object>(null);
 		}
 
-		public Task<IList<UserLoginInfo>> GetLoginsAsync(TIdentityUser user)
-		{
-			if (user == null)
-			{
-				throw new ArgumentNullException("user");
-			}
+        public async Task<IList<UserLoginInfo>> GetLoginsAsync(TIdentityUser user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
 
-			var dbUserLogins = dataModel.UserLogins.Where(x => x.User.Id.Equals(user.Id));
+            var dbUserLogins = dataModel.UserLogins.Where(x => x.User.Id.Equals(user.Id));
 
-			IList<UserLoginInfo> userLogins = dbUserLogins.Select(x => new UserLoginInfo(x.LoginProvider, x.ProviderKey)).ToList();
+            var userLogins = await dbUserLogins.Select(x => new UserLoginInfo(x.LoginProvider, x.ProviderKey)).ToListAsync();
 
-			return Task.FromResult(userLogins);
-		}
-
-		public Task<TIdentityUser> FindAsync(UserLoginInfo login)
+            return userLogins;
+        }
+        
+		public async Task<TIdentityUser> FindAsync(UserLoginInfo login)
 		{
 			if (login == null)
 			{
-				throw new ArgumentNullException("login");
+				throw new ArgumentNullException(nameof(login));
 			}
 
-			var userLogin = dataModel.UserLogins.SingleOrDefault(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
+			var userLogin = await dataModel.UserLogins.SingleOrDefaultAsync(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
 
 			if (userLogin != null)
 			{
-				return Task.FromResult(MapUser(userLogin.User));
+			    return MapUser(userLogin.User);
 			}
 
-			return Task.FromResult<TIdentityUser>(null);
+            return null;
 		}
 
-		public Task<IList<Claim>> GetClaimsAsync(TIdentityUser user)
+		public async Task<IList<Claim>> GetClaimsAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			var dbClaims = dataModel.UserClaims.Where(x => x.User.Id.Equals(user.Id));
 
-			IList<Claim> claims = dbClaims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).ToList();
+			var claims = await dbClaims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).ToListAsync();
 
-			return Task.FromResult(claims);
+		    return claims;
 		}
 
-		public Task AddClaimAsync(TIdentityUser user, Claim claim)
+		public async Task AddClaimAsync(TIdentityUser user, Claim claim)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			if (claim == null)
 			{
-				throw new ArgumentNullException("claim");
+				throw new ArgumentNullException(nameof(claim));
 			}
 
-			using (var scope = TransactionScopeFactory.CreateReadCommitted())
+			using (var scope = DataAccessScope.CreateReadCommitted())
 			{
 				var dbUserClaim = dataModel.UserClaims.Create();
 				var dbUser = dataModel.Users.GetReference(user.Id);
@@ -265,39 +256,35 @@ namespace AspNet.Identity.Shaolinq
 				dbUserClaim.ClaimType = claim.Type;
 				dbUserClaim.ClaimValue = claim.Value;
 
-				scope.Complete();
+				await scope.CompleteAsync();
 			}
-
-			return Task.FromResult<object>(null);
 		}
 
-		public Task RemoveClaimAsync(TIdentityUser user, Claim claim)
+		public async Task RemoveClaimAsync(TIdentityUser user, Claim claim)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			if (claim == null)
 			{
-				throw new ArgumentNullException("claim");
+				throw new ArgumentNullException(nameof(claim));
 			}
 
-			using (var scope = TransactionScopeFactory.CreateReadCommitted())
+			using (var scope = DataAccessScope.CreateReadCommitted())
 			{
-				dataModel.UserClaims.DeleteWhere(x => x.User.Id.Equals(user.Id) && x.ClaimType == claim.Type && x.ClaimValue == claim.Value);
+				await dataModel.UserClaims.DeleteAsync(x => x.User.Id.Equals(user.Id) && x.ClaimType == claim.Type && x.ClaimValue == claim.Value);
 
-				scope.Complete();
+				await scope.CompleteAsync();
 			}
-
-			return Task.FromResult<object>(null);
 		}
 
 		public Task SetSecurityStampAsync(TIdentityUser user, string stamp)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			user.SecurityStamp = stamp;
@@ -309,25 +296,25 @@ namespace AspNet.Identity.Shaolinq
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			return Task.FromResult(user.SecurityStamp);
 		}
 
-		public Task AddToRoleAsync(TIdentityUser user, string roleName)
+		public async Task AddToRoleAsync(TIdentityUser user, string roleName)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			if (string.IsNullOrEmpty(roleName))
 			{
-				throw new ArgumentNullException("roleName");
+				throw new ArgumentNullException(nameof(roleName));
 			}
 
-			using (var scope = TransactionScopeFactory.CreateReadCommitted())
+			using (var scope = DataAccessScope.CreateReadCommitted())
 			{
 				var dbUserRole = dataModel.UserRoles.Create();
 				var dbUser = dataModel.Users.GetReference(user.Id);
@@ -335,65 +322,57 @@ namespace AspNet.Identity.Shaolinq
 				dbUserRole.User = dbUser;
 				dbUserRole.Role = roleName;
 
-				scope.Complete();
+				await scope.CompleteAsync();
 			}
-
-			return Task.FromResult<object>(null);
 		}
 
-		public Task RemoveFromRoleAsync(TIdentityUser user, string roleName)
+		public async Task RemoveFromRoleAsync(TIdentityUser user, string roleName)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			if (string.IsNullOrEmpty(roleName))
 			{
-				throw new ArgumentNullException("roleName");
+				throw new ArgumentNullException(nameof(roleName));
 			}
 
-			using (var scope = TransactionScopeFactory.CreateReadCommitted())
+			using (var scope = DataAccessScope.CreateReadCommitted())
 			{
-				dataModel.UserRoles.DeleteWhere(x => x.User.Id.Equals(user.Id) && x.Role == roleName);
+				await dataModel.UserRoles.DeleteAsync(x => x.User.Id.Equals(user.Id) && x.Role == roleName);
 
-				scope.Complete();
+				await scope.CompleteAsync();
 			}
-
-			return Task.FromResult<object>(null);
 		}
 
-		public Task<IList<string>> GetRolesAsync(TIdentityUser user)
+		public async Task<IList<string>> GetRolesAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			var dbRoles = dataModel.UserRoles.Where(x => x.User.Id.Equals(user.Id));
 
-			IList<string> roles = dbRoles.Select(x => x.Role).ToList();
-
-			return Task.FromResult(roles);
+			return await dbRoles.Select(x => x.Role).ToListAsync();
 		}
 
-		public Task<bool> IsInRoleAsync(TIdentityUser user, string roleName)
+		public async Task<bool> IsInRoleAsync(TIdentityUser user, string roleName)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
-			var dbRole = dataModel.UserRoles.SingleOrDefault(x => x.User.Id.Equals(user.Id) && x.Role == roleName);
-
-			return Task.FromResult(dbRole != null);
+			return (await dataModel.UserRoles.SingleOrDefaultAsync(x => x.User.Id.Equals(user.Id) && x.Role == roleName)) != null;
 		}
 
 		public Task SetEmailAsync(TIdentityUser user, string email)
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			user.Email = email;
@@ -405,7 +384,7 @@ namespace AspNet.Identity.Shaolinq
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			return Task.FromResult(user.Email);
@@ -415,7 +394,7 @@ namespace AspNet.Identity.Shaolinq
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			return Task.FromResult(user.EmailConfirmed);
@@ -425,7 +404,7 @@ namespace AspNet.Identity.Shaolinq
 		{
 			if (user == null)
 			{
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			}
 
 			user.EmailConfirmed = confirmed;
@@ -433,11 +412,9 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<TIdentityUser> FindByEmailAsync(string email)
+		public async Task<TIdentityUser> FindByEmailAsync(string email)
 		{
-			var dbUser = dataModel.Users.SingleOrDefault(x => x.Email == email);
-
-			return Task.FromResult(MapUser(dbUser));
+		    return MapUser(await dataModel.Users.SingleOrDefaultAsync(x => x.Email == email));
 		}
 
 		public void Dispose()
