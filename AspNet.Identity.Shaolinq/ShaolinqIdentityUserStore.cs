@@ -106,11 +106,11 @@ namespace AspNet.Identity.Shaolinq
 		    return MapUser(dbUser);
 		}
 
-		public Task<TIdentityUser> FindByNameAsync(string userName)
+		public async Task<TIdentityUser> FindByNameAsync(string userName)
 		{
-			var dbUser = dataModel.Users.SingleOrDefault(x => x.UserName == userName);
+			var dbUser = await dataModel.Users.SingleOrDefaultAsync(x => x.UserName == userName);
 
-			return Task.FromResult(MapUser(dbUser));
+			return MapUser(dbUser);
 		}
 
 		public Task SetPasswordHashAsync(TIdentityUser user, string passwordHash)
@@ -166,6 +166,7 @@ namespace AspNet.Identity.Shaolinq
 				dbUserLogin.LoginProvider = login.LoginProvider;
 				dbUserLogin.ProviderKey = login.ProviderKey;
 
+				await scope.FlushAsync();
 				await scope.CompleteAsync();
 			}
 		}
@@ -198,7 +199,6 @@ namespace AspNet.Identity.Shaolinq
             }
 
             var dbUserLogins = dataModel.UserLogins.Where(x => x.User.Id.Equals(user.Id));
-
             var userLogins = await dbUserLogins.Select(x => new UserLoginInfo(x.LoginProvider, x.ProviderKey)).ToListAsync();
 
             return userLogins;
@@ -229,7 +229,6 @@ namespace AspNet.Identity.Shaolinq
 			}
 
 			var dbClaims = dataModel.UserClaims.Where(x => x.User.Id.Equals(user.Id));
-
 			var claims = await dbClaims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).ToListAsync();
 
 		    return claims;
@@ -256,6 +255,7 @@ namespace AspNet.Identity.Shaolinq
 				dbUserClaim.ClaimType = claim.Type;
 				dbUserClaim.ClaimValue = claim.Value;
 
+				await scope.FlushAsync();
 				await scope.CompleteAsync();
 			}
 		}
@@ -275,7 +275,7 @@ namespace AspNet.Identity.Shaolinq
 			using (var scope = DataAccessScope.CreateReadCommitted())
 			{
 				await dataModel.UserClaims.DeleteAsync(x => x.User.Id.Equals(user.Id) && x.ClaimType == claim.Type && x.ClaimValue == claim.Value);
-
+				await scope.FlushAsync();
 				await scope.CompleteAsync();
 			}
 		}
@@ -322,6 +322,7 @@ namespace AspNet.Identity.Shaolinq
 				dbUserRole.User = dbUser;
 				dbUserRole.Role = roleName;
 
+				await scope.FlushAsync();
 				await scope.CompleteAsync();
 			}
 		}
