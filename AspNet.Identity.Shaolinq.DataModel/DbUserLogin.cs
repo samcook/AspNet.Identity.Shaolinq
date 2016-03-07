@@ -14,11 +14,11 @@ namespace AspNet.Identity.Shaolinq.DataModel
 		public abstract DbUser User { get; set; }
 
 		[PersistedMember]
-		[Index(IndexName = "UserLogin_LoginProvider_ProviderKey_idx", CompositeOrder = 0)]
+		[Index(IndexName = "UserLogin_LoginProvider_ProviderKey_idx", Unique = true, CompositeOrder = 0)]
 		public abstract string LoginProvider { get; set; }
 
 		[PersistedMember]
-		[Index(IndexName = "UserLogin_LoginProvider_ProviderKey_idx", CompositeOrder = 1)]
+		[Index(IndexName = "UserLogin_LoginProvider_ProviderKey_idx", Unique = true, CompositeOrder = 1)]
 		public abstract string ProviderKey { get; set; }
 	}
 }
