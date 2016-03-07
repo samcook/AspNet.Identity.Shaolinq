@@ -52,6 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AspNet.Identity.Shaolinq\Properties\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="DbUser.cs" />
     <Compile Include="DbUserClaim.cs" />
     <Compile Include="DbUserLogin.cs" />

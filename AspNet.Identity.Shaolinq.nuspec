@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>AspNet.Identity.Shaolinq</id>
-		<version>1.3.0-alpha</version>
+		<version>1.3.1-alpha</version>
 		<title>AspNet.Identity.Shaolinq</title>
 		<authors>Sam Cook</authors>
 		<owners>Sam Cook</owners>
@@ -17,13 +17,13 @@
 1.1.0 - Add support for more generic user objects (both Asp.net Identity and Shaolinq).
 1.0.0 - Initial release.
 		</releaseNotes>
-		<copyright>Copyright 2015 Sam Cook</copyright>
+		<copyright>Copyright 2016 Sam Cook</copyright>
 		<tags>AspNet Identity Shaolinq</tags>
 		<dependencies>
 			<dependency id="Microsoft.AspNet.Identity.Core" version="2.2.0" />
 			<dependency id="Microsoft.AspNet.Identity.Owin" version="2.2.0" />
 			<dependency id="Shaolinq" version="1.0.1.508-rc"/>
-			<dependency id="AspNet.Identity.Shaolinq.DataModel" version="[1.3.0-alpha]" />
+			<dependency id="AspNet.Identity.Shaolinq.DataModel" version="[1.3.1-alpha]" />
 		</dependencies>
 	</metadata>
 	<files>

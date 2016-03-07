@@ -91,6 +91,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\SharedAssemblyInfo.cs" />
     <Compile Include="ShaolinqIdentityUserManager.cs" />
     <Compile Include="ShaolinqIdentityUserStore.cs" />
     <Compile Include="ShaolinqIdentityUser.cs" />
