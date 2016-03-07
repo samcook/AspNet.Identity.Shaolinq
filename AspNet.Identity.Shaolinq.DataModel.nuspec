@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>AspNet.Identity.Shaolinq.DataModel</id>
-		<version>1.3.1-alpha</version>
+		<version>1.3.4-alpha</version>
 		<title>AspNet.Identity.Shaolinq.DataModel</title>
 		<authors>Sam Cook</authors>
 		<owners>Sam Cook</owners>
@@ -20,7 +20,7 @@
 		<copyright>Copyright 2016 Sam Cook</copyright>
 		<tags>AspNet Identity Shaolinq</tags>
 		<dependencies>
-			<dependency id="Shaolinq" version="1.0.1.717-rc"/>
+			<dependency id="Shaolinq" version="1.0.1.736-rc"/>
 		</dependencies>
 	</metadata>
 	<files>
