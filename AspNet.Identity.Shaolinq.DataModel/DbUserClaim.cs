@@ -6,12 +6,13 @@ using Shaolinq;
 namespace AspNet.Identity.Shaolinq.DataModel
 {
 	[DataAccessObject(Name = "UserClaim")]
-	public abstract class DbUserClaim : DataAccessObject<Guid>, IShaolinqIdentityDbUserClaim<Guid, DbUser>
+	public abstract class DbUserClaim<TDbUser> : DataAccessObject<Guid>, IShaolinqIdentityDbUserClaim<Guid, TDbUser>
+		where TDbUser : DataAccessObject
 	{
 		[ValueRequired]
 		[BackReference]
 		[Index]
-		public abstract DbUser User { get; set; }
+		public abstract TDbUser User { get; set; }
 
 		[PersistedMember]
 		public abstract string ClaimType { get; set; }

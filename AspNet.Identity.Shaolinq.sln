@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNet.Identity.Shaolinq", "AspNet.Identity.Shaolinq\AspNet.Identity.Shaolinq.csproj", "{CBF0B527-3653-4E76-9D7A-3B1AC8159677}"
 EndProject
@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNet.Identity.Shaolinq.DataModel", "AspNet.Identity.Shaolinq.DataModel\AspNet.Identity.Shaolinq.DataModel.csproj", "{042605A4-B1DE-415F-BB4F-9E51188E15F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNet.Identity.Shaolinq.Tests", "AspNet.Identity.Shaolinq.Tests\AspNet.Identity.Shaolinq.Tests.csproj", "{1B0644F1-D47B-4573-B28E-52BEC26403F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +32,10 @@ Global
 		{042605A4-B1DE-415F-BB4F-9E51188E15F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{042605A4-B1DE-415F-BB4F-9E51188E15F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{042605A4-B1DE-415F-BB4F-9E51188E15F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B0644F1-D47B-4573-B28E-52BEC26403F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B0644F1-D47B-4573-B28E-52BEC26403F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B0644F1-D47B-4573-B28E-52BEC26403F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B0644F1-D47B-4573-B28E-52BEC26403F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

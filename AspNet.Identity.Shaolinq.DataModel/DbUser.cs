@@ -5,7 +5,13 @@ using Shaolinq;
 namespace AspNet.Identity.Shaolinq.DataModel
 {
 	[DataAccessObject(Name = "User")]
-	public abstract class DbUser : DataAccessObject<Guid>, IShaolinqIdentityDbUser<Guid>
+	public abstract class DbUser : DbUserBase<DbUser>, IShaolinqIdentityDbUser<Guid>
+	{
+	}
+
+	[DataAccessObject(NotPersisted = true)]
+	public abstract class DbUserBase<TDbUser> : DataAccessObject<Guid>
+		where TDbUser : DataAccessObject
 	{
 		[Index(Unique = true)]
 		[PersistedMember]
@@ -34,12 +40,12 @@ namespace AspNet.Identity.Shaolinq.DataModel
 		public abstract DateTime ActivationDate { get; set; }
 
 		[RelatedDataAccessObjects]
-		public abstract RelatedDataAccessObjects<DbUserLogin> UserLogins { get; }
+		public abstract RelatedDataAccessObjects<DbUserLogin<TDbUser>> UserLogins { get; }
 
 		[RelatedDataAccessObjects]
-		public abstract RelatedDataAccessObjects<DbUserClaim> UserClaims { get; }
+		public abstract RelatedDataAccessObjects<DbUserClaim<TDbUser>> UserClaims { get; }
 
 		[RelatedDataAccessObjects]
-		public abstract RelatedDataAccessObjects<DbUserRole> UserRoles { get; }
+		public abstract RelatedDataAccessObjects<DbUserRole<TDbUser>> UserRoles { get; }
 	}
 }
