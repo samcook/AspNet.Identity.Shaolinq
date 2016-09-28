@@ -15,10 +15,10 @@ namespace AspNet.Identity.Shaolinq
 		IUserClaimStore<TIdentityUser, TPrimaryKey>,
 		IUserSecurityStampStore<TIdentityUser, TPrimaryKey>,
 		IUserRoleStore<TIdentityUser, TPrimaryKey>,
-		IUserEmailStore<TIdentityUser, TPrimaryKey>
+		IUserEmailStore<TIdentityUser, TPrimaryKey>,
+		IUserLockoutStore<TIdentityUser, TPrimaryKey>
 
 		//IQueryableUserStore<TIdentityUser, TPrimaryKey>,
-		//IUserLockoutStore<TIdentityUser, TPrimaryKey>,
 		//IUserPhoneNumberStore<TIdentityUser, TPrimaryKey>,
 		//IUserTwoFactorStore<TIdentityUser, TPrimaryKey>
 
@@ -56,9 +56,9 @@ namespace AspNet.Identity.Shaolinq
 
 				await scope.FlushAsync();
 
-                user.Id = dbUser.Id;
+				user.Id = dbUser.Id;
 
-                await scope.CompleteAsync();
+				await scope.CompleteAsync();
 			}
 		}
 
@@ -103,7 +103,7 @@ namespace AspNet.Identity.Shaolinq
 		{
 			var dbUser = await dataModel.Users.SingleOrDefaultAsync(x => x.Id.Equals(userId));
 
-		    return MapUser(dbUser);
+			return MapUser(dbUser);
 		}
 
 		public async Task<TIdentityUser> FindByNameAsync(string userName)
@@ -191,19 +191,19 @@ namespace AspNet.Identity.Shaolinq
 			}
 		}
 
-        public async Task<IList<UserLoginInfo>> GetLoginsAsync(TIdentityUser user)
-        {
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
+		public async Task<IList<UserLoginInfo>> GetLoginsAsync(TIdentityUser user)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException(nameof(user));
+			}
 
-            var dbUserLogins = dataModel.UserLogins.Where(x => x.User.Id.Equals(user.Id));
-            var userLogins = await dbUserLogins.Select(x => new UserLoginInfo(x.LoginProvider, x.ProviderKey)).ToListAsync();
+			var dbUserLogins = dataModel.UserLogins.Where(x => x.User.Id.Equals(user.Id));
+			var userLogins = await dbUserLogins.Select(x => new UserLoginInfo(x.LoginProvider, x.ProviderKey)).ToListAsync();
 
-            return userLogins;
-        }
-        
+			return userLogins;
+		}
+
 		public async Task<TIdentityUser> FindAsync(UserLoginInfo login)
 		{
 			if (login == null)
@@ -215,10 +215,10 @@ namespace AspNet.Identity.Shaolinq
 
 			if (userLogin != null)
 			{
-			    return MapUser(userLogin.User);
+				return MapUser(userLogin.User);
 			}
 
-            return null;
+			return null;
 		}
 
 		public async Task<IList<Claim>> GetClaimsAsync(TIdentityUser user)
@@ -231,7 +231,7 @@ namespace AspNet.Identity.Shaolinq
 			var dbClaims = dataModel.UserClaims.Where(x => x.User.Id.Equals(user.Id));
 			var claims = await dbClaims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).ToListAsync();
 
-		    return claims;
+			return claims;
 		}
 
 		public async Task AddClaimAsync(TIdentityUser user, Claim claim)
@@ -415,7 +415,85 @@ namespace AspNet.Identity.Shaolinq
 
 		public async Task<TIdentityUser> FindByEmailAsync(string email)
 		{
-		    return MapUser(await dataModel.Users.SingleOrDefaultAsync(x => x.Email == email));
+			return MapUser(await dataModel.Users.SingleOrDefaultAsync(x => x.Email == email));
+		}
+
+		public Task<DateTimeOffset> GetLockoutEndDateAsync(TIdentityUser user)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException(nameof(user));
+			}
+
+			return Task.FromResult(user.LockoutEndDate);
+		}
+
+		public Task SetLockoutEndDateAsync(TIdentityUser user, DateTimeOffset lockoutEnd)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException(nameof(user));
+			}
+
+			user.LockoutEndDate = lockoutEnd;
+
+			return Task.FromResult<object>(null);
+		}
+
+		public Task<int> IncrementAccessFailedCountAsync(TIdentityUser user)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException(nameof(user));
+			}
+
+			user.AccessFailedCount++;
+
+			return Task.FromResult(user.AccessFailedCount);
+		}
+
+		public Task ResetAccessFailedCountAsync(TIdentityUser user)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException(nameof(user));
+			}
+
+			user.AccessFailedCount = 0;
+
+			return Task.FromResult<object>(null);
+		}
+
+		public Task<int> GetAccessFailedCountAsync(TIdentityUser user)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException(nameof(user));
+			}
+
+			return Task.FromResult(user.AccessFailedCount);
+		}
+
+		public Task<bool> GetLockoutEnabledAsync(TIdentityUser user)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException(nameof(user));
+			}
+
+			return Task.FromResult(user.IsLockoutEnabled);
+		}
+
+		public Task SetLockoutEnabledAsync(TIdentityUser user, bool enabled)
+		{
+			if (user == null)
+			{
+				throw new ArgumentNullException(nameof(user));
+			}
+
+			user.IsLockoutEnabled = enabled;
+
+			return Task.FromResult<object>(null);
 		}
 
 		public void Dispose()

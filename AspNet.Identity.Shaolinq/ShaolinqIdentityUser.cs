@@ -14,6 +14,9 @@ namespace AspNet.Identity.Shaolinq
 		public string PasswordHash { get; set; }
 		public string SecurityStamp { get; set; }
 		public bool IsAnonymousUser { get; set; }
+		public bool IsLockoutEnabled { get; set; }
+		public int AccessFailedCount { get; set; }
+		public DateTimeOffset LockoutEndDate { get; set; }
 
 		public virtual void PopulateFromDbUser(IShaolinqIdentityDbUser<TKey> dbUser)
 		{
@@ -29,6 +32,9 @@ namespace AspNet.Identity.Shaolinq
 			PasswordHash = dbUser.PasswordHash;
 			SecurityStamp = dbUser.SecurityStamp;
 			IsAnonymousUser = dbUser.IsAnonymousUser;
+			IsLockoutEnabled = dbUser.IsLockoutEnabled;
+			AccessFailedCount = dbUser.AccessFailedCount;
+			LockoutEndDate = dbUser.LockoutEndDate ?? DateTimeOffset.MinValue;
 		}
 
 		public virtual void PopulateDbUser(IShaolinqIdentityDbUser<TKey> toUser)
@@ -39,6 +45,9 @@ namespace AspNet.Identity.Shaolinq
 			toUser.PasswordHash = PasswordHash;
 			toUser.SecurityStamp = SecurityStamp;
 			toUser.IsAnonymousUser = IsAnonymousUser;
+			toUser.IsLockoutEnabled = IsLockoutEnabled;
+			toUser.AccessFailedCount = AccessFailedCount;
+			toUser.LockoutEndDate = LockoutEndDate == DateTimeOffset.MinValue ? (DateTime?) null : LockoutEndDate.UtcDateTime;
 		}
 	}
 }

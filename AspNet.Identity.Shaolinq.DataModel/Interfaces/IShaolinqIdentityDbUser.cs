@@ -13,5 +13,8 @@ namespace AspNet.Identity.Shaolinq.DataModel.Interfaces
 		string SecurityStamp { get; set; }
 		bool IsAnonymousUser { get; set; }
 		DateTime ActivationDate { get; set; }
+		bool IsLockoutEnabled { get; set; }
+		int AccessFailedCount { get; set; }
+		DateTime? LockoutEndDate { get; set; }
 	}
 }

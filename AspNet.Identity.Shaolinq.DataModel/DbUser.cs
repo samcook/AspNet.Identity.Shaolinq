@@ -33,6 +33,15 @@ namespace AspNet.Identity.Shaolinq.DataModel
 		[PersistedMember]
 		public abstract DateTime ActivationDate { get; set; }
 
+		[PersistedMember]
+		public abstract bool IsLockoutEnabled { get; set; }
+
+		[PersistedMember]
+		public abstract int AccessFailedCount { get; set; }
+
+		[PersistedMember]
+		public abstract DateTime? LockoutEndDate { get; set; }
+
 		[RelatedDataAccessObjects]
 		public abstract RelatedDataAccessObjects<DbUserLogin> UserLogins { get; }
 
