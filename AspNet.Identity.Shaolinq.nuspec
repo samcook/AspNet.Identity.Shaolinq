@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>AspNet.Identity.Shaolinq</id>
-		<version>1.4.0-alpha</version>
+		<version>1.4.1-alpha</version>
 		<title>AspNet.Identity.Shaolinq</title>
 		<authors>Sam Cook</authors>
 		<owners>Sam Cook</owners>
@@ -12,6 +12,7 @@
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>A persistence provider for AspNet Identity using Shaolinq</description>
 		<releaseNotes>
+1.4.1 - Make UserStore methods virtual, change some SingleOrDefault() calls to FirstOrDefault()
 1.4.0 - Add support for user lockout
 1.3.6 - Rebuild with new Shaolinq due to breaking change with ToListAsync()
 1.3.0 - Support native async in Shaolinq
