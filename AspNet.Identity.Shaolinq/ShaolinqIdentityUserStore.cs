@@ -101,16 +101,12 @@ namespace AspNet.Identity.Shaolinq
 
 		public virtual async Task<TIdentityUser> FindByIdAsync(TPrimaryKey userId)
 		{
-			var dbUser = await dataModel.Users.SingleOrDefaultAsync(x => x.Id.Equals(userId));
-
-			return MapUser(dbUser);
+			return await FindUserAsync(m => m.Users.SingleOrDefaultAsync(x => x.Id.Equals(userId)));
 		}
 
 		public virtual async Task<TIdentityUser> FindByNameAsync(string userName)
 		{
-			var dbUser = await dataModel.Users.FirstOrDefaultAsync(x => x.UserName == userName);
-
-			return MapUser(dbUser);
+			return await FindUserAsync(m => m.Users.FirstOrDefaultAsync(x => x.UserName == userName));
 		}
 
 		public virtual Task SetPasswordHashAsync(TIdentityUser user, string passwordHash)
@@ -211,14 +207,12 @@ namespace AspNet.Identity.Shaolinq
 				throw new ArgumentNullException(nameof(login));
 			}
 
-			var userLogin = await dataModel.UserLogins.SingleOrDefaultAsync(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
-
-			if (userLogin != null)
+			return await FindUserAsync(async m =>
 			{
-				return MapUser(userLogin.User);
-			}
+				var userLogin = await dataModel.UserLogins.Include(x => x.User).SingleOrDefaultAsync(x => x.LoginProvider == login.LoginProvider && x.ProviderKey == login.ProviderKey);
 
-			return null;
+				return userLogin?.User;
+			});
 		}
 
 		public virtual async Task<IList<Claim>> GetClaimsAsync(TIdentityUser user)
@@ -415,7 +409,7 @@ namespace AspNet.Identity.Shaolinq
 
 		public virtual async Task<TIdentityUser> FindByEmailAsync(string email)
 		{
-			return MapUser(await dataModel.Users.FirstOrDefaultAsync(x => x.Email == email));
+			return await FindUserAsync(m => m.Users.FirstOrDefaultAsync(x => x.Email == email));
 		}
 
 		public virtual Task<DateTimeOffset> GetLockoutEndDateAsync(TIdentityUser user)
@@ -496,6 +490,11 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
+		protected async Task<TIdentityUser> FindUserAsync(Func<TDataModel, Task<TDbUser>> findUserAsyncFunc)
+		{
+			return MapUser(await findUserAsyncFunc(dataModel));
+		}
+
 		public void Dispose()
 		{
 			Dispose(true);
@@ -506,12 +505,12 @@ namespace AspNet.Identity.Shaolinq
 		{
 		}
 
-		private static void MapUser(TIdentityUser fromUser, TDbUser toUser)
+		protected static void MapUser(TIdentityUser fromUser, TDbUser toUser)
 		{
 			fromUser.PopulateDbUser(toUser);
 		}
 
-		private static TIdentityUser MapUser(TDbUser dbUser)
+		protected static TIdentityUser MapUser(TDbUser dbUser)
 		{
 			if (dbUser == null)
 			{
