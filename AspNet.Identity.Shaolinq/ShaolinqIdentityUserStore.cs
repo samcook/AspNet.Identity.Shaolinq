@@ -39,7 +39,7 @@ namespace AspNet.Identity.Shaolinq
 			this.dataModel = dataModel;
 		}
 
-		public async Task CreateAsync(TIdentityUser user)
+		public virtual async Task CreateAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -62,7 +62,7 @@ namespace AspNet.Identity.Shaolinq
 			}
 		}
 
-		public async Task UpdateAsync(TIdentityUser user)
+		public virtual async Task UpdateAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -71,7 +71,7 @@ namespace AspNet.Identity.Shaolinq
 
 			using (var scope = DataAccessScope.CreateReadCommitted())
 			{
-				var dbUser = await dataModel.Users.SingleOrDefaultAsync(x => x.Id.Equals(user.Id));
+				var dbUser = await dataModel.Users.FirstOrDefaultAsync(x => x.Id.Equals(user.Id));
 
 				if (dbUser == null)
 				{
@@ -84,7 +84,7 @@ namespace AspNet.Identity.Shaolinq
 			}
 		}
 
-		public async Task DeleteAsync(TIdentityUser user)
+		public virtual async Task DeleteAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -99,21 +99,21 @@ namespace AspNet.Identity.Shaolinq
 			}
 		}
 
-		public async Task<TIdentityUser> FindByIdAsync(TPrimaryKey userId)
+		public virtual async Task<TIdentityUser> FindByIdAsync(TPrimaryKey userId)
 		{
 			var dbUser = await dataModel.Users.SingleOrDefaultAsync(x => x.Id.Equals(userId));
 
 			return MapUser(dbUser);
 		}
 
-		public async Task<TIdentityUser> FindByNameAsync(string userName)
+		public virtual async Task<TIdentityUser> FindByNameAsync(string userName)
 		{
-			var dbUser = await dataModel.Users.SingleOrDefaultAsync(x => x.UserName == userName);
+			var dbUser = await dataModel.Users.FirstOrDefaultAsync(x => x.UserName == userName);
 
 			return MapUser(dbUser);
 		}
 
-		public Task SetPasswordHashAsync(TIdentityUser user, string passwordHash)
+		public virtual Task SetPasswordHashAsync(TIdentityUser user, string passwordHash)
 		{
 			if (user == null)
 			{
@@ -125,7 +125,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<string> GetPasswordHashAsync(TIdentityUser user)
+		public virtual Task<string> GetPasswordHashAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -135,7 +135,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(user.PasswordHash);
 		}
 
-		public Task<bool> HasPasswordAsync(TIdentityUser user)
+		public virtual Task<bool> HasPasswordAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -145,7 +145,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
 		}
 
-		public async Task AddLoginAsync(TIdentityUser user, UserLoginInfo login)
+		public virtual async Task AddLoginAsync(TIdentityUser user, UserLoginInfo login)
 		{
 			if (user == null)
 			{
@@ -171,7 +171,7 @@ namespace AspNet.Identity.Shaolinq
 			}
 		}
 
-		public async Task RemoveLoginAsync(TIdentityUser user, UserLoginInfo login)
+		public virtual async Task RemoveLoginAsync(TIdentityUser user, UserLoginInfo login)
 		{
 			if (user == null)
 			{
@@ -191,7 +191,7 @@ namespace AspNet.Identity.Shaolinq
 			}
 		}
 
-		public async Task<IList<UserLoginInfo>> GetLoginsAsync(TIdentityUser user)
+		public virtual async Task<IList<UserLoginInfo>> GetLoginsAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -204,7 +204,7 @@ namespace AspNet.Identity.Shaolinq
 			return userLogins;
 		}
 
-		public async Task<TIdentityUser> FindAsync(UserLoginInfo login)
+		public virtual async Task<TIdentityUser> FindAsync(UserLoginInfo login)
 		{
 			if (login == null)
 			{
@@ -221,7 +221,7 @@ namespace AspNet.Identity.Shaolinq
 			return null;
 		}
 
-		public async Task<IList<Claim>> GetClaimsAsync(TIdentityUser user)
+		public virtual async Task<IList<Claim>> GetClaimsAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -234,7 +234,7 @@ namespace AspNet.Identity.Shaolinq
 			return claims;
 		}
 
-		public async Task AddClaimAsync(TIdentityUser user, Claim claim)
+		public virtual async Task AddClaimAsync(TIdentityUser user, Claim claim)
 		{
 			if (user == null)
 			{
@@ -260,7 +260,7 @@ namespace AspNet.Identity.Shaolinq
 			}
 		}
 
-		public async Task RemoveClaimAsync(TIdentityUser user, Claim claim)
+		public virtual async Task RemoveClaimAsync(TIdentityUser user, Claim claim)
 		{
 			if (user == null)
 			{
@@ -280,7 +280,7 @@ namespace AspNet.Identity.Shaolinq
 			}
 		}
 
-		public Task SetSecurityStampAsync(TIdentityUser user, string stamp)
+		public virtual Task SetSecurityStampAsync(TIdentityUser user, string stamp)
 		{
 			if (user == null)
 			{
@@ -292,7 +292,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<string> GetSecurityStampAsync(TIdentityUser user)
+		public virtual Task<string> GetSecurityStampAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -302,7 +302,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(user.SecurityStamp);
 		}
 
-		public async Task AddToRoleAsync(TIdentityUser user, string roleName)
+		public virtual async Task AddToRoleAsync(TIdentityUser user, string roleName)
 		{
 			if (user == null)
 			{
@@ -327,7 +327,7 @@ namespace AspNet.Identity.Shaolinq
 			}
 		}
 
-		public async Task RemoveFromRoleAsync(TIdentityUser user, string roleName)
+		public virtual async Task RemoveFromRoleAsync(TIdentityUser user, string roleName)
 		{
 			if (user == null)
 			{
@@ -347,7 +347,7 @@ namespace AspNet.Identity.Shaolinq
 			}
 		}
 
-		public async Task<IList<string>> GetRolesAsync(TIdentityUser user)
+		public virtual async Task<IList<string>> GetRolesAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -359,7 +359,7 @@ namespace AspNet.Identity.Shaolinq
 			return await dbRoles.Select(x => x.Role).ToListAsync();
 		}
 
-		public async Task<bool> IsInRoleAsync(TIdentityUser user, string roleName)
+		public virtual async Task<bool> IsInRoleAsync(TIdentityUser user, string roleName)
 		{
 			if (user == null)
 			{
@@ -369,7 +369,7 @@ namespace AspNet.Identity.Shaolinq
 			return (await dataModel.UserRoles.SingleOrDefaultAsync(x => x.User.Id.Equals(user.Id) && x.Role == roleName)) != null;
 		}
 
-		public Task SetEmailAsync(TIdentityUser user, string email)
+		public virtual Task SetEmailAsync(TIdentityUser user, string email)
 		{
 			if (user == null)
 			{
@@ -381,7 +381,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<string> GetEmailAsync(TIdentityUser user)
+		public virtual Task<string> GetEmailAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -391,7 +391,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(user.Email);
 		}
 
-		public Task<bool> GetEmailConfirmedAsync(TIdentityUser user)
+		public virtual Task<bool> GetEmailConfirmedAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -401,7 +401,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(user.EmailConfirmed);
 		}
 
-		public Task SetEmailConfirmedAsync(TIdentityUser user, bool confirmed)
+		public virtual Task SetEmailConfirmedAsync(TIdentityUser user, bool confirmed)
 		{
 			if (user == null)
 			{
@@ -413,12 +413,12 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public async Task<TIdentityUser> FindByEmailAsync(string email)
+		public virtual async Task<TIdentityUser> FindByEmailAsync(string email)
 		{
-			return MapUser(await dataModel.Users.SingleOrDefaultAsync(x => x.Email == email));
+			return MapUser(await dataModel.Users.FirstOrDefaultAsync(x => x.Email == email));
 		}
 
-		public Task<DateTimeOffset> GetLockoutEndDateAsync(TIdentityUser user)
+		public virtual Task<DateTimeOffset> GetLockoutEndDateAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -428,7 +428,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(user.LockoutEndDate);
 		}
 
-		public Task SetLockoutEndDateAsync(TIdentityUser user, DateTimeOffset lockoutEnd)
+		public virtual Task SetLockoutEndDateAsync(TIdentityUser user, DateTimeOffset lockoutEnd)
 		{
 			if (user == null)
 			{
@@ -440,7 +440,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<int> IncrementAccessFailedCountAsync(TIdentityUser user)
+		public virtual Task<int> IncrementAccessFailedCountAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -452,7 +452,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(user.AccessFailedCount);
 		}
 
-		public Task ResetAccessFailedCountAsync(TIdentityUser user)
+		public virtual Task ResetAccessFailedCountAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -464,7 +464,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult<object>(null);
 		}
 
-		public Task<int> GetAccessFailedCountAsync(TIdentityUser user)
+		public virtual Task<int> GetAccessFailedCountAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -474,7 +474,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(user.AccessFailedCount);
 		}
 
-		public Task<bool> GetLockoutEnabledAsync(TIdentityUser user)
+		public virtual Task<bool> GetLockoutEnabledAsync(TIdentityUser user)
 		{
 			if (user == null)
 			{
@@ -484,7 +484,7 @@ namespace AspNet.Identity.Shaolinq
 			return Task.FromResult(user.IsLockoutEnabled);
 		}
 
-		public Task SetLockoutEnabledAsync(TIdentityUser user, bool enabled)
+		public virtual Task SetLockoutEnabledAsync(TIdentityUser user, bool enabled)
 		{
 			if (user == null)
 			{
@@ -497,6 +497,12 @@ namespace AspNet.Identity.Shaolinq
 		}
 
 		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
 		{
 		}
 
